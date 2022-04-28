@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022 Solana Labs, Inc.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.solana.pay.sample">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SolanaPaySample">
+
+        <!-- Dummy activity representing the non-Solana Pay app contents -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Primary entrypoint for Solana Pay URIs -->
+        <activity
+            android:name=".SolanaPayActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="solana" />
+            </intent-filter>
+        </activity>
+
+        <!-- Entry point for NFC Solana Pay URIs -->
+        <activity-alias
+            android:name=".SolanaPayActivityViaNFC"
+            android:targetActivity=".SolanaPayActivity"
+            android:exported="true"
+            android:permission="android.permission.DISPATCH_NFC_MESSAGE">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="solana" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Entry point for internal Solana Pay URIs (e.g. a built in QR code scanner) -->
+        <activity-alias
+            android:name=".SolanaPayActivityViaInternal"
+            android:targetActivity=".SolanaPayActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

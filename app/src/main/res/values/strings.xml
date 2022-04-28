@@ -1,0 +1,20 @@
+<!--
+  ~ Copyright (c) 2022 Solana Labs, Inc.
+  -->
+
+<resources>
+    <string name="app_name">Solana Pay sample</string>
+
+    <!-- MainActivity strings -->
+    <string name="label_internal_solana_pay_uri">Launch Solana Pay internally\n(e.g. via a built-in QR scanner)</string>
+
+    <!-- SolanaPayActivity strings -->
+    <string name="label_entrypoint_type">Entrypoint:</string>
+    <string name="label_source_verification">Source:</string>
+    <string name="label_solana_pay_uri">URI:</string>
+    <string name="label_simulation_options">Simulate:</string>
+    <string name="label_simulate_authorize_submit">Authorized, submit succeeds</string>
+    <string name="label_simulate_authorize_but_submit_error">Authorized, but submit fails</string>
+    <string name="label_simulate_not_authorized">User declines to authorize</string>
+    <string name="label_simulate_wallet_rejects_transaction">Wallet rejects transaction</string>
+</resources>
