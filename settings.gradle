@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2022 Solana Labs, Inc.
+ */
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "Solana Pay sample"
+include ':app'
+include ':digitalassetlinks'
+include ':pay'
