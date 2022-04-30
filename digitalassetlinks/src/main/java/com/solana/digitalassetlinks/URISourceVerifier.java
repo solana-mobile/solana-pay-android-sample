@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-abstract class URISourceVerifier {
+public abstract class URISourceVerifier {
     private static final int HTTP_TIMEOUT_MS = 1000; // 1.0s
     private static final int MAX_DOCUMENT_LENGTH = 50 * 1024; // 100KB (2 bytes per char)
 
@@ -91,7 +91,7 @@ abstract class URISourceVerifier {
                 final String document;
                 try {
                     document = loadDocument(loadDocumentURI.toURL());
-                } catch (Exception e) {
+                } catch (IOException | UnsupportedOperationException e) {
                     throw new CouldNotVerifyException("Failed loading an Asset Links document " + loadDocumentURI, e);
                 }
 
