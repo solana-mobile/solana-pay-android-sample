@@ -5,10 +5,8 @@
 package com.solana.digitalassetlinks;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.digitalassetlinks.v1.MessagesProto;
 import com.google.digitalassetlinks.v1.testproto.TestProto;
@@ -24,19 +22,16 @@ import org.junit.runner.RunWith;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RunWith(ParameterizedRobolectricTestRunner.class)
@@ -429,48 +424,26 @@ public class DigitalAssetLinksCompatibilityTestSuite {
     }
 
     private static class MockInjectingURISourceVerifier extends URISourceVerifier {
-        @Nullable
-        private final HashMap<URI, URL> mockWebContent;
-
-        @Nullable
-        private final URL mock404;
+        @NonNull
+        private final MockWebContentServer server;
 
         private boolean hasParserWarnings;
 
         public MockInjectingURISourceVerifier(
                 @NonNull List<TestProto.HostedWebContent> hostedWebContents) {
             if (RUN_LOCALLY) {
-                mockWebContent = new HashMap<>();
-                for (TestProto.HostedWebContent webContent : hostedWebContents) {
-                    if (!webContent.hasUrl() || webContent.getUrl().isEmpty() || !webContent.hasBody()) {
-                        throw new IllegalArgumentException("Bad input HostedWebContent");
-                    }
-                    try {
-                        final HttpURLConnection mockConn = mock(HttpURLConnection.class);
-                        when(mockConn.getResponseCode()).thenReturn(HttpURLConnection.HTTP_OK);
-                        when(mockConn.getContentType()).thenReturn("application/json");
-                        when(mockConn.getInputStream()).thenReturn(
-                                new ByteArrayInputStream(webContent.getBodyBytes().toByteArray()));
-                        final URL mockURL = mock(URL.class);
-                        when(mockURL.openConnection()).thenReturn(mockConn);
-                        mockWebContent.put(canonicalizeURI(URI.create(webContent.getUrl())), mockURL);
-                    } catch (MalformedURLException e) {
-                        throw new IllegalArgumentException("HostedWebContent contains invalid URL", e);
-                    } catch (IOException ignored) {
-                        throw new RuntimeException("Should never occur");
-                    }
+                ArrayList<MockWebContentServer.Content> mockWebContents =
+                        new ArrayList<>(hostedWebContents.size());
+                for (TestProto.HostedWebContent hwc : hostedWebContents) {
+                    mockWebContents.add(new MockWebContentServer.Content(
+                            canonicalizeURI(URI.create(hwc.getUrl())),
+                            HttpURLConnection.HTTP_OK,
+                            "application/json",
+                            hwc.getBody()));
                 }
-                final HttpURLConnection mockHttp404 = mock(HttpURLConnection.class);
-                try {
-                    when(mockHttp404.getResponseCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
-                    mock404 = mock(URL.class);
-                    when(mock404.openConnection()).thenReturn(mockHttp404);
-                } catch (IOException ignored) {
-                    throw new RuntimeException("Should never occur");
-                }
+                server = new MockWebContentServer(mockWebContents);
             } else {
-                mockWebContent = null;
-                mock404 = null;
+                server = null;
             }
         }
 
@@ -527,12 +500,9 @@ public class DigitalAssetLinksCompatibilityTestSuite {
             URL url;
             if (RUN_LOCALLY) {
                 try {
-                    url = mockWebContent.get(canonicalizeURI(documentURL.toURI()));
+                    url = server.serve(canonicalizeURI(documentURL.toURI()));
                 } catch (URISyntaxException e) {
-                    throw new RuntimeException("Can't convert " + documentURL + " to URI");
-                }
-                if (url == null) {
-                    url = mock404;
+                    throw new RuntimeException("Test harness error converting URL to URI", e);
                 }
             } else {
                 url = documentURL;
