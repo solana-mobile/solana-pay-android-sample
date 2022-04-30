@@ -73,6 +73,7 @@ public class SolanaPayTransactionRequest extends SolanaPayURI {
         return Objects.hash(link, uri);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "SolanaPayTransactionRequest{" +

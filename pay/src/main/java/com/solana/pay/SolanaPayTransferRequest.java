@@ -109,6 +109,7 @@ public class SolanaPayTransferRequest extends SolanaPayURI {
         return Objects.hash(recipient, uri);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "SolanaPayTransferRequest{" +

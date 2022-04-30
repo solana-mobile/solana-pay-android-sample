@@ -1,0 +1,3 @@
+[submodule "digitalassetlinks/external/digitalassetlinks"]
+	path = digitalassetlinks/external/digitalassetlinks
+	url = https://github.com/google/digitalassetlinks.git

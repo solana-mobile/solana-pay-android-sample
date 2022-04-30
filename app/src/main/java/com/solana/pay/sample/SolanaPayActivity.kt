@@ -18,6 +18,7 @@ import com.solana.pay.sample.databinding.ActivitySolanaPayBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URI
 import kotlin.random.Random
 
 class SolanaPayActivity : AppCompatActivity() {
@@ -138,12 +139,23 @@ class SolanaPayActivity : AppCompatActivity() {
             val verifier = AndroidAppPackageVerifier(packageManager)
             this@SolanaPayActivity.verifier = verifier
             val verified = try {
-                // Verification call is synchronous, and uses the network; move to an IO thread
-                withContext (Dispatchers.IO) {
-                    val link = (solanaPayUri as SolanaPayTransactionRequest).link
-                    Log.d(TAG, "Starting Digital Asset Links verification of $packageName against $link")
-                    verifier.verify(packageName, link)
+                val link = (solanaPayUri as SolanaPayTransactionRequest).link
+                val linkURI = try {
+                    URI.create(link.toString())
+                } catch (e: IllegalArgumentException) {
+                    Log.w(TAG, "Transaction request URI is not valid", e)
+                    null
                 }
+
+                linkURI?.let {
+                    // Verification call is synchronous, and uses the network; move to an IO thread
+                    withContext (Dispatchers.IO) {
+                        Log.d(TAG, "Starting Digital Asset Links verification of $packageName against $link")
+                        verifier.verify(packageName, linkURI)
+                    }
+                } ?: false
+            } catch (e: java.lang.IllegalArgumentException) {
+                Log.w(TAG, "")
             } catch (e: AndroidAppPackageVerifier.CouldNotVerifyPackageException) {
                 Log.w(TAG, "Unable to verify package $packageName against $solanaPayUri", e)
                 false
