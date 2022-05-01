@@ -13,6 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk={ RobolectricConfig.MIN_SDK, RobolectricConfig.CUR_SDK })
 public class URISourceVerifierUnitTests {
 
     // NOTE: this class will not test the parsing correctness of this class - there's a whole

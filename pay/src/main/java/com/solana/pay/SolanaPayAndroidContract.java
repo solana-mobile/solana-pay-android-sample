@@ -30,10 +30,10 @@ public final class SolanaPayAndroidContract {
     /** (Transfer) base58-encoded public keys to include as read-only non-signer keys */
     public static final String QUERY_PARAMETER_REFERENCE = "reference";
 
-    /** (Transfer or Transaction) a URL-encoded UTF-8 string describing the source of the request */
+    /** (Transfer) a URL-encoded UTF-8 string describing the source of the request */
     public static final String QUERY_PARAMETER_LABEL = "label";
 
-    /** (Transfer or Transaction) a URL-encoded UTF-8 string describing the nature of the request */
+    /** (Transfer) a URL-encoded UTF-8 string describing the nature of the request */
     public static final String QUERY_PARAMETER_MESSAGE = "message";
 
     /** (Transfer) URL-encoded UTF-8 string to include in a SPL Memo instruction */

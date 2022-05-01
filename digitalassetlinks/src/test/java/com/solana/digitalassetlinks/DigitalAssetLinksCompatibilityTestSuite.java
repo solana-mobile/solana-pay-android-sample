@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(ParameterizedRobolectricTestRunner.class)
-@Config(manifest=Config.NONE)
+@Config(sdk={ RobolectricConfig.MIN_SDK, RobolectricConfig.CUR_SDK })
 public class DigitalAssetLinksCompatibilityTestSuite {
     // Change this value to false to run against the real hosted Digital Asset Links content
     private static final boolean RUN_LOCALLY = true;
@@ -424,7 +424,6 @@ public class DigitalAssetLinksCompatibilityTestSuite {
     }
 
     private static class MockInjectingURISourceVerifier extends URISourceVerifier {
-        @NonNull
         private final MockWebContentServer server;
 
         private boolean hasParserWarnings;

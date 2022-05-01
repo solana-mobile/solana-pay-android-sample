@@ -11,12 +11,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.content.pm.SigningInfo;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk={ RobolectricConfig.MIN_SDK, Build.VERSION_CODES.P, RobolectricConfig.CUR_SDK }) // SigningInfo introduced in P
 public class AndroidAppPackageVerifierUnitTests {
     // SHA256(0x01) == "4B:F5:12:2F:34:45:54:C5:3B:DE:2E:BB:8C:D2:B7:E3:D1:60:0A:D6:31:C3:85:A5:D7:CC:E2:3C:77:85:45:9A"
     private static final byte[] CERT_1 = new byte[] { 0x01 };
@@ -58,7 +61,7 @@ public class AndroidAppPackageVerifierUnitTests {
                 ANDROID_APP_STATEMENT_LIST_CERTS_2_3));
 
         final PackageManager pm = mockPackageManagerFactory(
-                "com.test.sample", new byte[][] { CERT_1, CERT_2 }, false);
+                "com.test.sample", new byte[][] { CERT_2, CERT_1 }, false);
 
         final AndroidAppPackageVerifierHarness verifier = 
                 new AndroidAppPackageVerifierHarness(pm, mockWebContent);
@@ -76,7 +79,7 @@ public class AndroidAppPackageVerifierUnitTests {
                 ANDROID_APP_STATEMENT_LIST_CERTS_2_3));
 
         final PackageManager pm = mockPackageManagerFactory(
-                "com.test.sample", new byte[][] { CERT_1, CERT_2 }, false);
+                "com.test.sample", new byte[][] { CERT_2, CERT_1 }, false);
 
         final AndroidAppPackageVerifierHarness verifier =
                 new AndroidAppPackageVerifierHarness(pm, mockWebContent);
@@ -95,7 +98,7 @@ public class AndroidAppPackageVerifierUnitTests {
                 ANDROID_APP_STATEMENT_LIST_CERTS_2_3));
 
         final PackageManager pm = mockPackageManagerFactory(
-                "com.test.other", new byte[][] { CERT_1, CERT_2 }, false);
+                "com.test.other", new byte[][] { CERT_2, CERT_1 }, false);
 
         final AndroidAppPackageVerifierHarness verifier =
                 new AndroidAppPackageVerifierHarness(pm, mockWebContent);
@@ -113,7 +116,7 @@ public class AndroidAppPackageVerifierUnitTests {
                 ANDROID_APP_STATEMENT_LIST_CERTS_2_3));
 
         final PackageManager pm = mockPackageManagerFactory(
-                "com.test.sample", new byte[][] { CERT_1, CERT_2 }, false);
+                "com.test.sample", new byte[][] { CERT_2, CERT_1 }, false);
 
         final AndroidAppPackageVerifierHarness verifier =
                 new AndroidAppPackageVerifierHarness(pm, mockWebContent);
@@ -189,7 +192,7 @@ public class AndroidAppPackageVerifierUnitTests {
 
         final PackageManager pm = mock(PackageManager.class);
         try {
-            when(pm.getPackageInfo("com.test.sample", PackageManager.GET_SIGNING_CERTIFICATES))
+            when(pm.getPackageInfo(eq("com.test.sample"), anyInt()))
                     .thenThrow(new PackageManager.NameNotFoundException());
         } catch (PackageManager.NameNotFoundException ignored) {}
 
@@ -199,34 +202,42 @@ public class AndroidAppPackageVerifierUnitTests {
                 () ->verifier.verify("com.test.sample", URI.create("https://www.test.com")));
     }
 
-    private PackageManager mockPackageManagerFactory(@NonNull String packageName,
-                                                     @NonNull byte[][] certificates,
-                                                     boolean multipleSigners) {
-        if (multipleSigners && certificates.length < 2) {
-            throw new IllegalArgumentException("multipleSigners requires >= 2 certificates");
-        } else if (certificates.length == 0) {
+    private static PackageManager mockPackageManagerFactory(@NonNull String packageName,
+                                                            @NonNull byte[][] certificates,
+                                                            boolean multipleSigners) {
+        if (certificates.length == 0) {
             throw new IllegalArgumentException("at least 1 certificate required");
+        } else if (multipleSigners && certificates.length == 1) {
+            throw new IllegalArgumentException("multipleSigners requires at least 2 certificates");
         }
 
-        final SigningInfo si = mock(SigningInfo.class);
-        when(si.hasMultipleSigners()).thenReturn(multipleSigners);
-        when(si.hasPastSigningCertificates()).thenReturn(!multipleSigners);
+        final PackageInfo pi = new PackageInfo();
+        final int piFlags;
         final Signature[] certs = new Signature[certificates.length];
         for (int i = 0; i < certificates.length; i++) {
             certs[i] = new Signature(certificates[i]);
         }
-        when(si.getSigningCertificateHistory()).thenReturn(multipleSigners ? null : certs);
-        when(si.getApkContentsSigners())
-                .thenReturn(multipleSigners ? certs : new Signature[] { certs[0] });
 
-        final PackageInfo pi = new PackageInfo();
-        pi.signingInfo = si;
-        pi.signatures = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            final SigningInfo si = mock(SigningInfo.class);
+            when(si.hasMultipleSigners()).thenReturn(multipleSigners);
+            when(si.hasPastSigningCertificates()).thenReturn(!multipleSigners && certs.length >= 2);
+            when(si.getSigningCertificateHistory()).thenReturn(multipleSigners ? null : certs);
+            when(si.getApkContentsSigners())
+                    .thenReturn(multipleSigners ? certs : new Signature[]{certs[0]});
+
+            piFlags = PackageManager.GET_SIGNING_CERTIFICATES;
+            pi.signingInfo = si;
+            //noinspection deprecation
+            pi.signatures = null;
+        } else {
+            piFlags = PackageManager.GET_SIGNATURES;
+            pi.signatures = (multipleSigners ? certs : new Signature[] { certs[0] });
+        }
 
         final PackageManager pm = mock(PackageManager.class);
         try {
-            when(pm.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES))
-                    .thenReturn(pi);
+            when(pm.getPackageInfo(eq(packageName), eq(piFlags))).thenReturn(pi);
         } catch (PackageManager.NameNotFoundException ignored) {}
 
         return pm;

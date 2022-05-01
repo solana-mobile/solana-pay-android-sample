@@ -19,6 +19,15 @@ public class SolanaPayTransferRequest extends SolanaPayURI {
     private static final String AMOUNT_FORMAT_REGEX = "^\\d+(?:\\.\\d+)?$";
 
     /**
+     * The query parameters from {@link #uri}, encoded as a relative {@link Uri}. The Solana Pay
+     * URI format is opaque, and the Android {@link Uri} class won't parse the query parameters from
+     * it. This field is a hierarchical {@link Uri}, and thus can be used to easily extract query
+     * parameters.
+     */
+    @NonNull
+    public final Uri queryParametersUri;
+
+    /**
      * The transfer request recipient address.
      * <p/>NOTE: this has been validated to be a base58-encoded public key-like value, but it has
      * not been verified to be an actual valid public key.
@@ -33,6 +42,12 @@ public class SolanaPayTransferRequest extends SolanaPayURI {
      */
     public SolanaPayTransferRequest(@NonNull Uri uri) {
         super(uri);
+        final String encodedQuery = uri.getEncodedQuery();
+        if (encodedQuery != null) {
+            queryParametersUri = Uri.parse("?" + uri.getEncodedQuery());
+        } else {
+            queryParametersUri = Uri.EMPTY;
+        }
         recipient = validate();
     }
 
@@ -101,20 +116,21 @@ public class SolanaPayTransferRequest extends SolanaPayURI {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SolanaPayTransferRequest that = (SolanaPayTransferRequest) o;
-        return recipient.equals(that.recipient) && uri.equals(that.uri);
+        return uri.equals(that.uri);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(recipient, uri);
+        return Objects.hash(uri);
     }
 
     @NonNull
     @Override
     public String toString() {
         return "SolanaPayTransferRequest{" +
-                "recipient='" + recipient + '\'' +
-                ", uri=" + uri +
+                "uri=" + uri +
+                ", recipient='" + recipient + '\'' +
+                ", queryParametersUri=" + queryParametersUri +
                 '}';
     }
 }
