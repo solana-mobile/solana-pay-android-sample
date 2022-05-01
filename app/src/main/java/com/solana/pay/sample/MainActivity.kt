@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         viewBinding.buttonInternalUri.setOnClickListener {
             val i = Intent()
             i.component = ComponentName(packageName, "com.solana.pay.sample.SolanaPayActivityViaInternal")
+            // NOTE: this is an arbitrary address - please don't perform any real transfers to it!
             i.data = Uri.parse("solana:84npKJKZy8ixjdq8UChZULDUea2Twt8ThxjiqKd7QZ54?amount=100&memo=Test%20xfer")
             startActivity(i)
         }

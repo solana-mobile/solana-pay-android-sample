@@ -8,7 +8,6 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,17 +45,6 @@ public class SolanaPayTransactionRequest extends SolanaPayURI {
         if (!"https".equals(linkScheme)) {
             throw new IllegalArgumentException("Link scheme must be an https URL");
         }
-
-        final List<String> label = queryParametersUri.getQueryParameters(SolanaPayAndroidContract.QUERY_PARAMETER_LABEL);
-        if (label.size() > 1) {
-            throw new IllegalArgumentException(SolanaPayAndroidContract.QUERY_PARAMETER_LABEL + " query parameter should appear at most once");
-        }
-
-        final List<String> message = queryParametersUri.getQueryParameters(SolanaPayAndroidContract.QUERY_PARAMETER_MESSAGE);
-        if (message.size() > 1) {
-            throw new IllegalArgumentException(SolanaPayAndroidContract.QUERY_PARAMETER_MESSAGE + " query parameter should appear at most once");
-        }
-
         return link;
     }
 
@@ -65,20 +53,20 @@ public class SolanaPayTransactionRequest extends SolanaPayURI {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SolanaPayTransactionRequest that = (SolanaPayTransactionRequest) o;
-        return link.equals(that.link) && uri.equals(that.uri);
+        return uri.equals(that.uri);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(link, uri);
+        return Objects.hash(uri);
     }
 
     @NonNull
     @Override
     public String toString() {
         return "SolanaPayTransactionRequest{" +
-                "link=" + link +
-                ", uri=" + uri +
+                "uri=" + uri +
+                ", link=" + link +
                 '}';
     }
 }

@@ -23,15 +23,6 @@ public abstract class SolanaPayURI {
     public final Uri uri;
 
     /**
-     * The query parameters from {@link #uri}, encoded as a relative {@link Uri}. The Solana Pay
-     * URI format is opaque, and the Android {@link Uri} class won't parse the query parameters from
-     * it. This field is a hierarchical {@link Uri}, and thus can be used to easily extract query
-     * parameters.
-     */
-    @NonNull
-    public final Uri queryParametersUri;
-
-    /**
      * Construct a new {@link SolanaPayURI}
      * @param uri the Solana Pay {@link Uri} to parse
      * @throws IllegalArgumentException if uri is not a valid Solana Pay {@link Uri}
@@ -39,7 +30,6 @@ public abstract class SolanaPayURI {
     protected SolanaPayURI(@NonNull Uri uri) {
         validate(uri);
         this.uri = uri;
-        queryParametersUri = Uri.parse("?" + uri.getQuery());
     }
 
     private static void validate(@NonNull Uri uri) {
