@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022 Solana Labs, Inc.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.solana.digitalassetlinks.test">
+
+    <!-- Uses internet permissions to fetch Asset Links files from authoritative URLs -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Test code requires that we can query some standard Android packages -->
+    <queries>
+        <package android:name="com.android.camera2" />
+        <package android:name="com.google.android.gms" />
+    </queries>
+
+</manifest>
