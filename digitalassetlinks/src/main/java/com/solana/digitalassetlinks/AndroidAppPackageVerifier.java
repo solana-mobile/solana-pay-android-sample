@@ -37,9 +37,9 @@ public class AndroidAppPackageVerifier extends URISourceVerifier {
     /**
      * Verify that the specified app package is covered by a reliable statement in the Asset Links
      * JSON for the provided {@link URI}.
-     * <p/><i>NOTE: this method performs blocking network activity; it should not be invoked on the
+     * <p><i>NOTE: this method performs blocking network activity; it should not be invoked on the
      * UI thread of an app. A running instance of this function can be cancelled (from another
-     * thread using the {@link #cancel()} method.</i>
+     * thread using the {@link #cancel()} method.</i></p>
      * @param packageName the android app package name (e.g. com.solana.example)
      * @param uri the URI with which this app package should be verified. This should be a URI that
      *      establishes a trust link of interest to the app. For example, if the use case is a

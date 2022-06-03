@@ -29,8 +29,8 @@ public class SolanaPayTransferRequest extends SolanaPayURI {
 
     /**
      * The transfer request recipient address.
-     * <p/>NOTE: this has been validated to be a base58-encoded public key-like value, but it has
-     * not been verified to be an actual valid public key.
+     * <p>NOTE: this has been validated to be a base58-encoded public key-like value, but it has
+     * not been verified to be an actual valid public key.</p>
      */
     @NonNull
     public final String recipient;

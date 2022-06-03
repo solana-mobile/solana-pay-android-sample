@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.ArrayMap;
 
-import org.jetbrains.annotations.Contract;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -239,7 +238,6 @@ public class StatementMatcher {
      * @return a new {@link Builder}
      */
     @NonNull
-    @Contract(" -> new")
     public static Builder newBuilder() {
         return new Builder();
     }
