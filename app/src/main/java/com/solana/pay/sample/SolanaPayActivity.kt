@@ -61,13 +61,13 @@ class SolanaPayActivity : AppCompatActivity() {
         viewBinding.apply {
             btnSimulateAuthorizeSubmit.setOnClickListener {
                 Log.d(TAG, "Simulating authorization and successful submission of transaction")
-                val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_TXID, createFakeTransactionId())
+                val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_SIGNATURE, createFakeTransactionSignatureBase58())
                 setResult(Activity.RESULT_OK, result)
                 finish()
             }
             btnSimulateAuthorizeButSubmitError.setOnClickListener {
                 Log.d(TAG, "Simulating authorization and unsuccessful submission of transaction")
-                val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_TXID, createFakeTransactionId())
+                val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_SIGNATURE, createFakeTransactionSignatureBase58())
                 setResult(SolanaPayAndroidContract.RESULT_FAILED, result)
                 finish()
             }
@@ -187,7 +187,7 @@ class SolanaPayActivity : AppCompatActivity() {
         }
     }
 
-    private fun createFakeTransactionId(): ByteArray = Random.Default.nextBytes(64)
+    private fun createFakeTransactionSignatureBase58(): String = Base58EncodeUseCase(Random.Default.nextBytes(64))
 
     private enum class Entrypoint {
         URI, NFC, INTERNAL

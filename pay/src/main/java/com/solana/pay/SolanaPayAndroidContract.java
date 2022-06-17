@@ -44,24 +44,24 @@ public final class SolanaPayAndroidContract {
     // =============================================================================================
 
     // The Solana Pay transaction was processed successfully
-    // The result Intent will contain {@link #EXTRA_TXID}
+    // The result Intent will contain {@link #EXTRA_SIGNATURE}
     // Activity.RESULT_OK = -1;
 
     // The Solana Pay transaction was cancelled without being attempted
     // Activity.RESULT_CANCELED = 0;
 
     /** The validity of the calling app or Solana Pay URI contents could not be verified */
-    public static final int RESULT_NOT_VERIFIED = 1;
+    public static final int RESULT_NOT_VERIFIED = 501;
 
     /**
      * The Solana Pay transaction was not successfully processed.
-     * The result Intent may contain {@link #EXTRA_TXID}, if the transaction was sent to the chain
-     * but not accepted or failed.
+     * The result Intent may contain {@link #EXTRA_SIGNATURE}, if the transaction was submitted to
+     * the network, but either not confirmed or not successful.
      */
-    public static final int RESULT_FAILED = 2;
+    public static final int RESULT_FAILED = 502;
 
     /** The user declined to authorize the Solana Pay transaction */
-    public static final int RESULT_DECLINED = 3;
+    public static final int RESULT_DECLINED = 503;
 
     /** The allowed result values of Solana Pay Activity result codes */
     @Retention(RetentionPolicy.SOURCE)
@@ -73,10 +73,10 @@ public final class SolanaPayAndroidContract {
     // =============================================================================================
 
     /**
-     * The transaction ID for the submitted transaction (whether or not it was accepted and
-     * processed by the chain).
+     * The base58-encoded transaction signature for the submitted transaction (whether or not it was
+     * confirmed or successful).
      */
-    public static final String EXTRA_TXID = "com.solana.pay.TXID";
+    public static final String EXTRA_SIGNATURE = "com.solana.pay.SIGNATURE";
 
     /** Not constructable */
     private SolanaPayAndroidContract() {}
