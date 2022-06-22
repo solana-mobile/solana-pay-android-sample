@@ -31,9 +31,9 @@ _Check back soon! We plan to publish the [pay](pay) and [digitalassetlinks](digi
 
 ## Developer documentation
 
-`pay`: [JavaDoc](TODO)
+`pay`: [JavaDoc](https://solana-mobile.github.io/solana-pay-android-sample/pay/javadoc/index.html)
 
-`digitalassetlinks`: [JavaDoc](TODO)
+`digitalassetlinks`: [JavaDoc](https://solana-mobile.github.io/solana-pay-android-sample/digitalassetlinks/javadoc/index.html)
 
 ## Get involved
 
