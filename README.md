@@ -2,7 +2,7 @@
 
 _Part of the [Solana Mobile Stack](https://github.com/solana-mobile/solana-mobile-stack-sdk)_
 
-Join us on [Discord](https://discord.gg/UGmCGJhvAr)
+Join us on [Discord](https://discord.gg/solanamobile)
 
 ## Summary
 
@@ -37,4 +37,4 @@ _Check back soon! We plan to publish the [pay](pay) and [digitalassetlinks](digi
 
 ## Get involved
 
-Contributions are welcome! Go ahead and file Issues, open Pull Requests, or join us on our [Discord](https://discord.gg/UGmCGJhvAr) to discuss this SDK.
+Contributions are welcome! Go ahead and file Issues, open Pull Requests, or join us on our [Discord](https://discord.gg/solanamobile) to discuss this SDK.
