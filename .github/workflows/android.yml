@@ -5,13 +5,15 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  release:
+    types: [ published ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
+    # Setup
     - uses: actions/checkout@v3
       with:
         submodules: true
@@ -22,7 +24,33 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    # Build
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle and run tests
       run: ./gradlew build
+
+      # Publish to Maven Central (only for releases that start with 'v')
+    - name: Publish to Maven Central (release only)
+      if: ${{ github.event_name == 'release' && startsWith(github.event.release.tag_name, 'v') }}
+      env:
+        ORG_GRADLE_PROJECT_signingKey: ${{ secrets.MAVEN_CENTRAL_PUBLISHING_PRIVATE_KEY }}
+        ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.MAVEN_CENTRAL_PUBLISHING_PRIVATE_KEY_PASSWORD }}
+        ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVEN_CENTRAL_PUBLISHING_USERNAME }}
+        ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVEN_CENTRAL_PUBLISHING_PASSWORD }}
+        TAG: ${{ github.event.release.tag_name }}
+      run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -P version=${TAG:1}
+
+      # Upload artifacts to GitHub release
+    - name: Compress pay javadoc (release only)
+      if: ${{ github.event_name == 'release' }}
+      run: tar -cvzf pay/build/docs/pay-javadoc.tgz -C pay/build/docs javadoc
+    - name: Upload files to release (release only)
+      if: ${{ github.event_name == 'release' }}
+      run: gh release upload ${TAG} ${FILES}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG: ${{ github.event.release.tag_name }}
+        FILES: |
+          pay/build/docs/pay-javadoc.tgz
+          pay/build/outputs/aar/*.aar

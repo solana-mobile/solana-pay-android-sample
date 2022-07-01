@@ -1,5 +1,8 @@
 # Solana Pay on Android sample
 
+[![Release (latest by date)](https://img.shields.io/github/v/release/solana-mobile/solana-pay-android-sample)](https://github.com/solana-mobile/solana-pay-android-sample/releases/latest)
+[![Android CI](https://github.com/solana-mobile/solana-pay-android-sample/actions/workflows/android.yml/badge.svg)](https://github.com/solana-mobile/solana-pay-android-sample/actions/workflows/android.yml)
+
 _Part of the [Solana Mobile Stack](https://github.com/solana-mobile/solana-mobile-stack-sdk)_
 
 Join us on [Discord](https://discord.gg/solanamobile)
@@ -27,7 +30,13 @@ All Android projects within this repository can be built using [Android Studio](
 
 ### How to reference these libraries in your project
 
-_Check back soon! We plan to publish the [pay](pay) and [digitalassetlinks](digitalassetlinks) libraries on Maven Central._
+#### Gradle
+
+```
+dependencies {
+    implementation 'com.solanamobile:solana-pay-android:0.1.0'
+}
+```
 
 ## Developer documentation
 

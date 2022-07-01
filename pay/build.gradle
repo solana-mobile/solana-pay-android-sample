@@ -4,6 +4,8 @@
 
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
+    id 'signing'
 }
 
 android {
@@ -33,6 +35,63 @@ android {
             includeAndroidResources = true
         }
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = group
+            artifactId = 'solana-pay-android'
+            pom {
+                name = 'Solana Pay - Android'
+                description = 'Android library for Solana Pay. It provides classes to ease integration of Solana Pay on Android devices.'
+                url = 'https://github.com/solana-mobile/solana-pay-android-sample'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'Solana Mobile Engineering'
+                        email = 'eng@solanamobile.com'
+                        organization = 'Solana Mobile Inc.'
+                        organizationUrl = 'https://solanamobile.com'
+                    }
+                }
+                organization {
+                    name = 'Solana Mobile Inc.'
+                    url = 'https://solanamobile.com'
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/solana-mobile/solana-pay-android-sample.git'
+                    developerConnection = 'scm:git:ssh://github.com/solana-mobile/solana-pay-android-sample.git'
+                    url = 'https://github.com/solana-mobile/solana-pay-android-sample/tree/main'
+                }
+            }
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+}
+
+signing {
+    // Signing private key and password provided by ORG_GRADLE_PROJECT_signingKey and
+    // ORG_GRADLE_PROJECT_signingPassword, respectively
+    def signingKey = findProperty('signingKey')
+    def signingPassword = findProperty('signingPassword')
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.release
 }
 
 // Define JavaDoc build task for all variants
