@@ -12,6 +12,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write # needed for uploading files to releases
+
     steps:
     # Setup
     - uses: actions/checkout@v3
