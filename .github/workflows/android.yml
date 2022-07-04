@@ -12,9 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write # needed for uploading files to releases
-
     steps:
       # Setup
       - uses: actions/checkout@v3
@@ -33,8 +30,18 @@ jobs:
       - name: Build with Gradle and run tests
         run: ./gradlew build
 
+      # Upload libraries to workflow artifacts
+      - uses: actions/upload-artifact@v3
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          name: libraries
+          path: pay/build/outputs/aar/*.aar
+          if-no-files-found: error
+          retention-days: 5
+
       # Upload javadoc to workflow artifacts
       - uses: actions/upload-artifact@v3
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           name: digitalassetlinks-javadoc
           path: |
@@ -43,6 +50,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
       - uses: actions/upload-artifact@v3
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           name: pay-javadoc
           path: |
@@ -62,20 +70,7 @@ jobs:
           TAG: ${{ github.event.release.tag_name }}
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -P version=${TAG:1}
 
-        # Upload artifacts to GitHub release
-      - name: Compress pay javadoc (release only)
-        if: ${{ github.event_name == 'release' }}
-        run: tar -cvzf pay/build/docs/pay-javadoc.tgz -C pay/build/docs javadoc
-      - name: Upload files to release (release only)
-        if: ${{ github.event_name == 'release' }}
-        run: gh release upload ${TAG} ${FILES}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.event.release.tag_name }}
-          FILES: |
-            pay/build/docs/pay-javadoc.tgz
-            pay/build/outputs/aar/*.aar
-
+  # Note: only runs on 'push' events
   publish-to-gh-pages:
     runs-on: ubuntu-latest
     needs: build
@@ -99,3 +94,31 @@ jobs:
           artifact-name: pay-javadoc
           dest: pay
           commit-message: 'Update pay javadoc'
+
+  # Note: only runs on 'release' events
+  upload-to-release:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write # needed for uploading files to releases
+    if: ${{ github.event_name == 'release' }}
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: libraries
+          path: libraries
+      - uses: actions/download-artifact@v3
+        with:
+          name: pay-javadoc
+          path: pay-javadoc
+      - name: Compress pay javadoc
+        run: tar -cvzf pay-javadoc/pay-javadoc.tgz -C pay-javadoc javadoc
+      - name: Upload files to release
+        run: gh release -R ${GITHUB_REPOSITORY} upload ${TAG} ${FILES}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+          FILES: |
+            libraries/*.aar
+            pay-javadoc/pay-javadoc.tgz
