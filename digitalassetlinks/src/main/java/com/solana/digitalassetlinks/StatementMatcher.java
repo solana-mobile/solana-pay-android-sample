@@ -4,9 +4,10 @@
 
 package com.solana.digitalassetlinks;
 
+import android.util.ArrayMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.collection.ArrayMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
