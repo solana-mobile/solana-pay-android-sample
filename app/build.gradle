@@ -46,7 +46,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
     implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.solanamobile:digital-asset-links-android:1.0.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.3'
-    implementation project(path: ':digitalassetlinks')
     implementation project(path: ':pay')
 }
