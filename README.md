@@ -20,8 +20,6 @@ This repository is primarily intended for consumption by developers of Android w
 - An [integration guide](docs/integration_guide.md) for Android wallets
   - Android apps and web sites utilizing Solana Pay, and developers interesting in creating Solana Pay URIs that are accessible via QR codes or NFC taps, may also find this guide useful
 - A set of [Solana Pay API and support classes](pay) for parsing Solana Pay URIs
-- An [Android-compatible implementation](digitalassetlinks) of [Digital Asset Links](http://digitalassetlinks.org/)
-  - This can be used by Android apps to verify that an installed package is associated with a specified web domain
 - A [sample app](app) demonstrating the techniques described in the [integration guide](docs/integration_guide.md)
 
 ## How to build
@@ -41,8 +39,6 @@ dependencies {
 ## Developer documentation
 
 `pay`: [JavaDoc](https://solana-mobile.github.io/solana-pay-android-sample/pay/javadoc/index.html)
-
-`digitalassetlinks`: [JavaDoc](https://solana-mobile.github.io/solana-pay-android-sample/digitalassetlinks/javadoc/index.html)
 
 ## Get involved
 
