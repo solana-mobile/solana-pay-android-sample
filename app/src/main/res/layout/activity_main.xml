@@ -18,6 +18,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/label_internal_solana_pay_uri"
-        android:textSize="10pt" />
+        android:textSize="22sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

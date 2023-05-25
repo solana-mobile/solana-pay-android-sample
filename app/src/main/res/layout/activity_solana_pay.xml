@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_entrypoint_type"
-            android:textSize="12pt"
+            android:textSize="26sp"
             android:textStyle="bold" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_entrypoint_type"
@@ -37,7 +37,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tv_entrypoint_type_label"
             app:layout_constraintStart_toEndOf="@id/tv_entrypoint_type_label"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="12pt" />
+            android:textSize="26sp" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_source_verification_label"
             android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_entrypoint_type_label"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_source_verification"
-            android:textSize="12pt"
+            android:textSize="26sp"
             android:textStyle="bold" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_source_verification"
@@ -56,7 +56,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tv_source_verification_label"
             app:layout_constraintStart_toEndOf="@id/tv_source_verification_label"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="12pt" />
+            android:textSize="26sp" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_solana_pay_uri_label"
             android:layout_width="wrap_content"
@@ -65,7 +65,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_source_verification_label"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_solana_pay_uri"
-            android:textSize="12pt"
+            android:textSize="26sp"
             android:textStyle="bold" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_solana_pay_uri"
@@ -76,7 +76,7 @@
             app:layout_constraintStart_toEndOf="@id/tv_solana_pay_uri_label"
             app:layout_constraintEnd_toEndOf="parent"
             android:minLines="2"
-            android:textSize="12pt" />
+            android:textSize="26sp" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_simulation_options_label"
             android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_solana_pay_uri"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_simulation_options"
-            android:textSize="12pt"
+            android:textSize="26sp"
             android:textStyle="bold" />
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_simulate_authorize_submit"
@@ -95,7 +95,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_simulation_options_label"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_simulate_authorize_submit"
-            android:textSize="10pt" />
+            android:textSize="22sp" />
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_simulate_authorize_but_submit_error"
             android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
             app:layout_constraintTop_toBottomOf="@id/btn_simulate_authorize_submit"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_simulate_authorize_but_submit_error"
-            android:textSize="10pt" />
+            android:textSize="22sp" />
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_simulate_not_authorized"
             android:layout_width="wrap_content"
@@ -113,7 +113,7 @@
             app:layout_constraintTop_toBottomOf="@id/btn_simulate_authorize_but_submit_error"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_simulate_not_authorized"
-            android:textSize="10pt" />
+            android:textSize="22sp" />
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_simulate_wallet_rejects_transaction"
             android:layout_width="wrap_content"
@@ -122,7 +122,7 @@
             app:layout_constraintTop_toBottomOf="@id/btn_simulate_not_authorized"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/label_simulate_wallet_rejects_transaction"
-            android:textSize="10pt" />
+            android:textSize="22sp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
