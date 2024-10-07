@@ -32,7 +32,7 @@ All Android projects within this repository can be built using [Android Studio](
 
 ```
 dependencies {
-    implementation 'com.solanamobile:solana-pay-android:1.0.0'
+    implementation 'com.solanamobile:solana-pay-android:1.0.1'
 }
 ```
 
