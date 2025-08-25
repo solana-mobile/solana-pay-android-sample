@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace 'com.solana.pay.sample'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.solana.pay.sample"
