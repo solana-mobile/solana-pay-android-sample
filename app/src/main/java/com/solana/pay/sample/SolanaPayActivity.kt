@@ -8,21 +8,31 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.solana.digitalassetlinks.AndroidAppPackageVerifier
 import com.solana.pay.SolanaPayAndroidContract
 import com.solana.pay.SolanaPayTransactionRequest
 import com.solana.pay.SolanaPayURI
-import com.solana.pay.sample.databinding.ActivitySolanaPayBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URI
 import kotlin.random.Random
 
-class SolanaPayActivity : AppCompatActivity() {
-    private lateinit var viewBinding: ActivitySolanaPayBinding
+class SolanaPayActivity : ComponentActivity() {
 
     private lateinit var entrypoint: Entrypoint
     private lateinit var sourceVerificationStatus: SourceVerification
@@ -30,11 +40,10 @@ class SolanaPayActivity : AppCompatActivity() {
 
     private var verifier: AndroidAppPackageVerifier? = null
 
+    private val uiState = mutableStateOf(SolanaPayUiState())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewBinding = ActivitySolanaPayBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
 
         setResult(Activity.RESULT_CANCELED)
 
@@ -58,32 +67,40 @@ class SolanaPayActivity : AppCompatActivity() {
         deriveEntrypoint()
         doSourceVerification()
 
-        viewBinding.apply {
-            btnSimulateAuthorizeSubmit.setOnClickListener {
-                Log.d(TAG, "Simulating authorization and successful submission of transaction")
-                val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_SIGNATURE, createFakeTransactionSignatureBase58())
-                setResult(Activity.RESULT_OK, result)
-                finish()
-            }
-            btnSimulateAuthorizeButSubmitError.setOnClickListener {
-                Log.d(TAG, "Simulating authorization and unsuccessful submission of transaction")
-                val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_SIGNATURE, createFakeTransactionSignatureBase58())
-                setResult(SolanaPayAndroidContract.RESULT_FAILED, result)
-                finish()
-            }
-            btnSimulateNotAuthorized.setOnClickListener {
-                Log.d(TAG, "Simulating user declined to authorize transaction")
-                setResult(SolanaPayAndroidContract.RESULT_DECLINED)
-                finish()
-            }
-            btnSimulateWalletRejectsTransaction.setOnClickListener {
-                Log.d(TAG, "Simulating wallet failed to verify transaction validity")
-                setResult(SolanaPayAndroidContract.RESULT_NOT_VERIFIED)
-                finish()
+        setContent {
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    SolanaPayScreen(
+                        uiState = uiState.value,
+                        onSimulateAuthorizeSubmit = {
+                            Log.d(TAG, "Simulating authorization and successful submission of transaction")
+                            val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_SIGNATURE, createFakeTransactionSignatureBase58())
+                            setResult(Activity.RESULT_OK, result)
+                            finish()
+                        },
+                        onSimulateAuthorizeButSubmitError = {
+                            Log.d(TAG, "Simulating authorization and unsuccessful submission of transaction")
+                            val result = Intent().putExtra(SolanaPayAndroidContract.EXTRA_SIGNATURE, createFakeTransactionSignatureBase58())
+                            setResult(SolanaPayAndroidContract.RESULT_FAILED, result)
+                            finish()
+                        },
+                        onSimulateNotAuthorized = {
+                            Log.d(TAG, "Simulating user declined to authorize transaction")
+                            setResult(SolanaPayAndroidContract.RESULT_DECLINED)
+                            finish()
+                        },
+                        onSimulateWalletRejectsTransaction = {
+                            Log.d(TAG, "Simulating wallet failed to verify transaction validity")
+                            setResult(SolanaPayAndroidContract.RESULT_NOT_VERIFIED)
+                            finish()
+                        }
+                    )
+                }
             }
         }
-
-        updateUI()
     }
 
     override fun onDestroy() {
@@ -175,16 +192,14 @@ class SolanaPayActivity : AppCompatActivity() {
     }
 
     private fun updateUI() {
-        viewBinding.apply {
-            tvEntrypointType.text = entrypoint.toString()
-            tvSourceVerification.text = sourceVerificationStatus.toString()
-            tvSolanaPayUri.text = solanaPayUri.uri.toString()
-            val en = sourceVerificationStatus in listOf(
+        uiState.value = SolanaPayUiState(
+            entrypointType = entrypoint.toString(),
+            sourceVerification = sourceVerificationStatus.toString(),
+            solanaPayUri = solanaPayUri.uri.toString(),
+            isButtonsEnabled = sourceVerificationStatus in listOf(
                 SourceVerification.VERIFIED, SourceVerification.NOT_VERIFIABLE
             )
-            btnSimulateAuthorizeSubmit.isEnabled = en
-            btnSimulateAuthorizeButSubmitError.isEnabled = en
-        }
+        )
     }
 
     private fun createFakeTransactionSignatureBase58(): String = Base58EncodeUseCase(Random.Default.nextBytes(64))
@@ -199,5 +214,130 @@ class SolanaPayActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = SolanaPayActivity::class.simpleName
+    }
+}
+
+data class SolanaPayUiState(
+    val entrypointType: String = "",
+    val sourceVerification: String = "",
+    val solanaPayUri: String = "",
+    val isButtonsEnabled: Boolean = false
+)
+
+
+@Composable
+fun SolanaPayScreen(
+    uiState: SolanaPayUiState,
+    onSimulateAuthorizeSubmit: () -> Unit,
+    onSimulateAuthorizeButSubmitError: () -> Unit,
+    onSimulateNotAuthorized: () -> Unit,
+    onSimulateWalletRejectsTransaction: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(8.dp)
+    ) {
+        // Entrypoint Type Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.label_entrypoint_type),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = uiState.entrypointType,
+                fontSize = 26.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        // Source Verification Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.label_source_verification),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = uiState.sourceVerification,
+                fontSize = 26.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        // Solana Pay URI Section
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.label_solana_pay_uri),
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = uiState.solanaPayUri,
+            fontSize = 26.sp,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Simulation Options Section
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.label_simulation_options),
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        // Simulation Buttons
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onSimulateAuthorizeSubmit,
+            enabled = uiState.isButtonsEnabled
+        ) {
+            Text(
+                text = stringResource(R.string.label_simulate_authorize_submit),
+                fontSize = 22.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onSimulateAuthorizeButSubmitError,
+            enabled = uiState.isButtonsEnabled
+        ) {
+            Text(
+                text = stringResource(R.string.label_simulate_authorize_but_submit_error),
+                fontSize = 22.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onSimulateNotAuthorized
+        ) {
+            Text(
+                text = stringResource(R.string.label_simulate_not_authorized),
+                fontSize = 22.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onSimulateWalletRejectsTransaction
+        ) {
+            Text(
+                text = stringResource(R.string.label_simulate_wallet_rejects_transaction),
+                fontSize = 22.sp
+            )
+        }
     }
 }
