@@ -45,7 +45,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.3.0'
     implementation 'androidx.core:core-ktx:1.17.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.10.0'
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'com.solanamobile:digital-asset-links-android:1.0.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
