@@ -1,0 +1,49 @@
+language: android
+
+before_install:
+  - chmod +x gradlew
+
+script:
+  - ./gradlew build
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/modules-2/
+    - $HOME/.gradle/caches/artifacts-2/
+    - $HOME/.gradle/wrapper/
+
+notifications:
+  email: false
+
+jdk:
+  - openjdk17
+
+android:
+  components:
+    - tools
+    - build-tools-30.0.3
+    - android-30
+
+before_deploy:
+  - export TAG=${TRAVIS_TAG:-$(git rev-parse --short HEAD)}
+  - export VERSION=${TAG:1}
+  - export ORG_GRADLE_PROJECT_signingKey=$MAVEN_CENTRAL_PUBLISHING_PRIVATE_KEY
+  - export ORG_GRADLE_PROJECT_signingPassword=$MAVEN_CENTRAL_PUBLISHING_PRIVATE_KEY_PASSWORD
+  - export ORG_GRADLE_PROJECT_sonatypeUsername=$MAVEN_CENTRAL_PUBLISHING_USERNAME
+  - export ORG_GRADLE_PROJECT_sonatypePassword=$MAVEN_CENTRAL_PUBLISHING_PASSWORD
+
+deploy:
+  provider: script
+  script: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Pversion=$VERSION
+  skip_cleanup: true
+  on:
+    tags: true
+
+after_success:
+  - if [ "$TRAVIS_TAG" != null ]; then
+      gh release upload $TRAVIS_TAG "pay/build/outputs/aar/*.aar" "pay/build/docs/*" -F "pay-javadoc.tgz";
+    fi
