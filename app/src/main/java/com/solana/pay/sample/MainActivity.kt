@@ -23,11 +23,27 @@ class MainActivity : AppCompatActivity() {
         val transactionSignatureBase58: String?
     )
 
-    private val solanaPayActivityResult = registerForActivityResult(object : ActivityResultContract<Uri, SolanaPayResult>() {
+    // Sends an intent out that launches the internal activity/component "SolanaPayActivity"
+    private val solanaPayActivityResultInternal = registerForActivityResult(object : ActivityResultContract<Uri, SolanaPayResult>() {
         override fun createIntent(context: Context, solanaPayUri: Uri): Intent {
             val i = Intent()
             i.component = ComponentName(packageName, "com.solana.pay.sample.SolanaPayActivityViaInternal")
             i.data = solanaPayUri
+            return i
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): SolanaPayResult {
+            return SolanaPayResult(resultCode, intent?.getStringExtra(SolanaPayAndroidContract.EXTRA_SIGNATURE))
+        }
+    }) { result ->
+        val str = "Result=${result.result}, sig=${result.transactionSignatureBase58}"
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show()
+    }
+
+    // Sends an intent out externally to be received by app's with matching intent filters for `solanaPayUri`
+    private val solanaPayActivityResultExternal = registerForActivityResult(object : ActivityResultContract<Uri, SolanaPayResult>() {
+        override fun createIntent(context: Context, solanaPayUri: Uri): Intent {
+            val i = Intent(Intent.ACTION_VIEW, solanaPayUri)
             return i
         }
 
@@ -47,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         viewBinding.buttonInternalUri.setOnClickListener {
             // NOTE: this is an arbitrary address - please don't perform any real transfers to it!
-            solanaPayActivityResult.launch(Uri.parse("solana:84npKJKZy8ixjdq8UChZULDUea2Twt8ThxjiqKd7QZ54?amount=100&memo=Test%20xfer"))
+            solanaPayActivityResultExternal.launch(Uri.parse("solana:84npKJKZy8ixjdq8UChZULDUea2Twt8ThxjiqKd7QZ54?amount=100&memo=Test%20xfer"))
         }
     }
 }
