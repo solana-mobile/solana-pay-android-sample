@@ -10,11 +10,10 @@ plugins {
 
 android {
     namespace 'com.solana.pay'
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         minSdk 23
-        targetSdk 34
 
         consumerProguardFiles "consumer-rules.pro"
     }

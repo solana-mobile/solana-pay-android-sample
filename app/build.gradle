@@ -4,12 +4,11 @@
 
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
 }
 
 android {
     namespace 'com.solana.pay.sample'
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         applicationId "com.solana.pay.sample"
@@ -33,10 +32,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 }
 
