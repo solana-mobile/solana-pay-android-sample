@@ -116,8 +116,8 @@ tasks.whenTaskAdded { task ->
 }
 
 dependencies {
-    compileOnly 'androidx.annotation:annotation:1.10.0'
-    testImplementation 'androidx.annotation:annotation:1.10.0'
+    compileOnly 'androidx.annotation:annotation:1.11.0'
+    testImplementation 'androidx.annotation:annotation:1.11.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.17'
 }
