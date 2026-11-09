@@ -6,8 +6,22 @@ updates:
     schedule:
       interval: "weekly"
 
+    # One grouped PR for minor + patch bumps; majors land individually.
+    groups:
+      github-actions:
+        update-types:
+          - "minor"
+          - "patch"
+
   - package-ecosystem: "gradle"
     # Files stored in the default project in the root of this repo
     directory: "/"
     schedule:
       interval: "weekly"
+
+    # One grouped PR for minor + patch bumps; majors land individually.
+    groups:
+      gradle:
+        update-types:
+          - "minor"
+          - "patch"
